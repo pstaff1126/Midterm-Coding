@@ -3,11 +3,12 @@ package com.cisc181.core;
 import java.util.Calendar;
 import java.util.Date;
 
+
 /*
  * comment
  */
 public abstract class Person {
-
+	
 	private Date DOB;
 	private String FirstName;
 	private String MiddleName;
@@ -40,8 +41,20 @@ public abstract class Person {
 		this.LastName = LastName;
 	}
 
-	public Date getDOB() {
-		return DOB;
+	public Date getDOB() throws PersonException {
+		
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.YEAR, 1915);
+		c.set(Calendar.MONTH, Calendar.JANUARY);
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		Date date = c.getTime();
+		if (DOB.after(date)) {
+			return(this.DOB);
+		}
+		else {
+			throw new PersonException(this);
+		}
+		
 	}
 
 	public void setDOB(Date DOB) {
@@ -59,10 +72,33 @@ public abstract class Person {
 	public void setPhone(String newPhone_number) {
 		phone_number = newPhone_number;
 	}
-
-	public String getPhone() {
-		return phone_number;
-	}
+	/*
+	 * Instead of using one regex, I found it easier to check for a couple of different ones
+	 * The first 4 if and else ifs check for various, valid phone number inputs
+	 */
+	public String getPhone() throws PersonException {
+		
+        if (this.phone_number.matches("\\d{10}")){
+        	return this.phone_number;
+        }
+        
+        else if(phone_number.matches("\\d{3}[-\\.\\s]\\d{3}[-\\.\\s]\\d{4}")){
+        	return this.phone_number;
+        }
+        
+        else if(phone_number.matches("\\d{3}-\\d{3}-\\d{4}\\s(x|(ext))\\d{3,5}")) {
+        	return this.phone_number;
+        }
+       
+        else if(phone_number.matches("\\(\\d{3}\\)-\\d{3}-\\d{4}")) {
+        	return this.phone_number;
+        }
+        
+        else {
+        	throw new PersonException(this.phone_number);
+        }
+         
+    }
 
 	public void setEmail(String newEmail) {
 		email_address = newEmail;
@@ -94,7 +130,7 @@ public abstract class Person {
 		this.email_address = Email;
 		
 	}
-
+	
 	public void PrintName() {
 		System.out.println(this.FirstName + ' ' + this.MiddleName + ' '
 				+ this.LastName);
@@ -134,5 +170,8 @@ public abstract class Person {
 
 		return age;
 
+	}
+	public static void main(String args[]) {
+		
 	}
 }
